@@ -4,6 +4,21 @@ import { Express } from "express";
 import swaggerUi from "swagger-ui-express";
 import config from "./env";
 
+const servers =
+  process.env.NODE_ENV === "production"
+    ? [
+        {
+          url: "https://currency-converter-e4i2.onrender.com",
+          description: "Production server",
+        },
+      ]
+    : [
+        {
+          url: `http://localhost:${config.port}`,
+          description: "Development server",
+        },
+      ];
+
 const options: Options = {
   definition: {
     openapi: "3.0.0",
@@ -17,16 +32,7 @@ const options: Options = {
         email: "support@currencyconverter.example.com",
       },
     },
-    servers: [
-      {
-        url: `http://localhost:${config.port}`,
-        description: "Development server",
-      },
-      {
-        url: "https://currency-converter-e4i2.onrender.com",
-        description: "Production server",
-      },
-    ],
+    servers: servers,
     components: {
       securitySchemes: {
         BearerAuth: {
