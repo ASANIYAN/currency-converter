@@ -23,8 +23,6 @@ export class RateAggregatorService {
     const base = baseCurrency.toUpperCase();
     const target = targetCurrency.toUpperCase();
 
-    console.log(`Fetching rate: ${base} → ${target}`);
-
     // Step 1: Check cache first
     const cachedRate = await this.checkCache(base, target);
     if (cachedRate) {
@@ -69,17 +67,13 @@ export class RateAggregatorService {
     base: string,
     target: string
   ): Promise<ConversionResult | null> {
-    console.log("Checking cache...");
-
     const cached = await cacheService.getRate(base, target);
 
     if (!cached) {
-      console.log("Cache miss");
       return null;
     }
 
     const ttl = await cacheService.getTTL(base, target);
-    console.log(`Cache hit! (TTL: ${ttl}s remaining)`);
 
     return {
       baseCurrency: cached.baseCurrency,
@@ -96,23 +90,17 @@ export class RateAggregatorService {
     base: string,
     target: string
   ): Promise<ConversionResult | null> {
-    console.log("Fetching from external APIs...");
-
     const apiResult = await externalAPIService.fetchRateWithAggregation(
       base,
       target
     );
 
     if (!apiResult.success) {
-      console.log("All external APIs failed");
       return null;
     }
 
-    console.log(`Rate fetched from: ${apiResult.source}`);
-
     // Store in cache for future requests
     await cacheService.setRate(base, target, apiResult.rate, apiResult.source);
-    console.log("Rate cached for 5 minutes");
 
     // Store in database for historical record
     await databaseService.saveRate(
@@ -121,7 +109,6 @@ export class RateAggregatorService {
       apiResult.rate,
       apiResult.source
     );
-    console.log("Rate saved to database");
 
     return {
       baseCurrency: base,
@@ -138,17 +125,11 @@ export class RateAggregatorService {
     base: string,
     target: string
   ): Promise<ConversionResult | null> {
-    console.log("Trying database fallback...");
-
     const latestRate = await databaseService.getLatestRate(base, target);
 
     if (!latestRate) {
-      console.log("No historical data in database");
       return null;
     }
-
-    console.log("Using stale data from database (all APIs unavailable)");
-    console.log(`Data age: ${this.getDataAge(latestRate.createdAt)}`);
 
     return {
       baseCurrency: latestRate.baseCurrency,
@@ -169,13 +150,7 @@ export class RateAggregatorService {
     const base = baseCurrency.toUpperCase();
     const target = targetCurrency.toUpperCase();
 
-    console.log(`Fetching ${hours}-hour history: ${base} → ${target}`);
-
     const history = await databaseService.getRateHistory(base, target, hours);
-
-    console.log(
-      `Found ${history.length} historical records: ${history[0].source}, ${history[1].source}`
-    );
 
     return {
       baseCurrency: base,
@@ -216,13 +191,11 @@ export class RateAggregatorService {
       baseCurrency.toUpperCase(),
       targetCurrency.toUpperCase()
     );
-    console.log(`Cache cleared for ${baseCurrency} → ${targetCurrency}`);
   }
 
   // Clear all cached rates
   async clearAllCache(): Promise<void> {
     await cacheService.clearAll();
-    console.log("All cache cleared");
   }
 }
 

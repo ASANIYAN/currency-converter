@@ -26,9 +26,7 @@ export const initializeTables = async (): Promise<void> => {
   try {
     await pool.query(createRatesTable);
     await pool.query(createIndexes);
-    console.log("Database tables initialized");
   } catch (error) {
-    console.error("Failed to initialize database tables:", error);
     throw error;
   }
 };

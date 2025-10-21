@@ -44,7 +44,6 @@ export class ExternalAPIService {
         timestamp: new Date(response.data.timestamp * 1000).toISOString(),
       };
     } catch (error) {
-      console.error("Fixer API error:", this.getErrorMessage(error));
       return {
         success: false,
         rate: 0,
@@ -85,7 +84,6 @@ export class ExternalAPIService {
         timestamp,
       };
     } catch (error) {
-      console.error("Frankfurter API error:", this.getErrorMessage(error));
       return {
         success: false,
         rate: 0,
@@ -123,7 +121,6 @@ export class ExternalAPIService {
         source: "currencyapi",
       };
     } catch (error) {
-      console.error("CurrencyAPI error:", this.getErrorMessage(error));
       return {
         success: false,
         rate: 0,
@@ -141,36 +138,30 @@ export class ExternalAPIService {
     const fixerResult = await this.fetchFromFixer(baseCurrency, targetCurrency);
 
     if (fixerResult.success) {
-      console.log("Rate fetched from Fixer (primary)");
       return fixerResult;
     }
 
     // Primary failed, try secondary
-    console.log("Primary API failed, trying secondary...");
     const frankfurterResult = await this.fetchFromFrankfurter(
       baseCurrency,
       targetCurrency
     );
 
     if (frankfurterResult.success) {
-      console.log("✓ Rate fetched from Frankfurter (secondary)");
       return frankfurterResult;
     }
 
     // Secondary failed, try backup
-    console.log("Secondary API failed, trying backup...");
     const currencyApiResult = await this.fetchFromCurrencyAPI(
       baseCurrency,
       targetCurrency
     );
 
     if (currencyApiResult.success) {
-      console.log("Rate fetched from CurrencyAPI (backup)");
       return currencyApiResult;
     }
 
     // All APIs failed
-    console.error("All external APIs failed");
     return {
       success: false,
       rate: 0,
@@ -214,7 +205,6 @@ export class ExternalAPIService {
 
     // If no APIs succeeded, return failure
     if (successfulResults.length === 0) {
-      console.error("✗ All APIs failed during aggregation");
       return {
         success: false,
         rate: 0,
@@ -228,10 +218,6 @@ export class ExternalAPIService {
       successfulResults.length;
 
     const sources = successfulResults.map((r) => r.source).join("+");
-
-    console.log(
-      `✓ Aggregated rate from ${successfulResults.length} sources: ${sources}`
-    );
 
     return {
       success: true,

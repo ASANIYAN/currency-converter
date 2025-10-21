@@ -20,20 +20,19 @@ export const connectDatabase = async (): Promise<Pool> => {
   });
 
   pool.on("connect", () => {
-    console.log("PostgreSQL client connected");
+    // PostgreSQL client connected
   });
 
   pool.on("error", (err) => {
-    console.error("PostgreSQL pool error:", err.message);
+    // PostgreSQL pool error
   });
 
   // Test the connection
   try {
     const client = await pool.connect();
-    console.log("PostgreSQL connected successfully");
+    // PostgreSQL connected successfully
     client.release();
   } catch (error) {
-    console.error("Failed to connect to PostgreSQL:", error);
     throw error;
   }
 
@@ -53,7 +52,6 @@ export const disconnectDatabase = async (): Promise<void> => {
   if (pool) {
     await pool.end();
     pool = null;
-    console.log("PostgreSQL disconnected");
   }
 };
 

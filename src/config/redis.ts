@@ -19,15 +19,15 @@ export const connectRedis = async (): Promise<Redis> => {
   });
 
   redisClient.on("connect", () => {
-    console.log("Redis connected successfully");
+    // Redis connected successfully
   });
 
   redisClient.on("error", (err) => {
-    console.error("Redis connection error:", err.message);
+    // Redis connection error
   });
 
   redisClient.on("close", () => {
-    console.log("Redis connection closed");
+    // Redis connection closed
   });
 
   return redisClient;
@@ -44,6 +44,5 @@ export const disconnectRedis = async (): Promise<void> => {
   if (redisClient) {
     await redisClient.quit();
     redisClient = null;
-    console.log("Redis disconnected");
   }
 };
