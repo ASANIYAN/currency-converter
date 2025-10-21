@@ -17,11 +17,9 @@ export const connectDatabase = async (): Promise<Pool> => {
     max: 20, // Maximum number of clients in the pool
     idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
     connectionTimeoutMillis: 2000, // Return error after 2 seconds if can't connect
-    ...(config.nodeEnv === "production" && {
-      ssl: {
-        rejectUnauthorized: false, // Required for Neon in production
-      },
-    }),
+    ssl: {
+      rejectUnauthorized: false, // Required for Neon
+    },
   });
 
   pool.on("connect", () => {
