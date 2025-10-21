@@ -11,11 +11,19 @@ const servers =
           url: "https://currency-converter-e4i2.onrender.com",
           description: "Production server",
         },
+        {
+          url: `http://localhost:${config.port}`,
+          description: "Development server (local)",
+        },
       ]
     : [
         {
           url: `http://localhost:${config.port}`,
           description: "Development server",
+        },
+        {
+          url: "https://currency-converter-e4i2.onrender.com",
+          description: "Production server",
         },
       ];
 
@@ -205,7 +213,18 @@ export const setupSwagger = (app: Express): void => {
     "/api-docs",
     swaggerUi.serve,
     swaggerUi.setup(specs, {
+      explorer: true,
       customCss: customSwaggerCSS,
+      customSiteTitle: "Currency Converter API Documentation",
+      swaggerOptions: {
+        docExpansion: "list",
+        filter: true,
+        displayRequestDuration: true,
+        tryItOutEnabled: true,
+        persistAuthorization: true,
+        // Ensure the correct server is selected by default
+        servers: servers,
+      },
     })
   );
 };
