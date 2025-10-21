@@ -116,6 +116,7 @@ curl "http://localhost:3000/api/health"
 
 - **Fixer.io**: Primary exchange rate provider
 - **OpenExchangeRates**: Secondary provider
+- **Frankfurter**: Fallback provider
 
 ### Development Tools
 
