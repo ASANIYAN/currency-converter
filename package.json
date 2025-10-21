@@ -1,16 +1,21 @@
 {
   "name": "currency-converter",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Currency conversion service with multi-provider support",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "postinstall": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "currency",
+    "converter",
+    "exchange-rates"
+  ],
+  "author": "Asaniyan Ayomide",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
