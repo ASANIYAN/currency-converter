@@ -57,6 +57,10 @@ app.use("/api", currencyRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Welcome to Currency Converter API!" });
+});
+
 const startServer = async () => {
   try {
     await connectRedis();
