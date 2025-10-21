@@ -32,34 +32,35 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Setup Swagger documentation
-if (config.nodeEnv === "development") {
-  // Direct setup method (matching the provided pattern)
-  app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(specs, {
-      explorer: true,
-      customCss: customSwaggerCSS,
-      customSiteTitle: "Currency Converter API Documentation",
-      swaggerOptions: {
-        docExpansion: "list",
-        filter: true,
-        displayRequestDuration: true,
-        tryItOutEnabled: true,
-      },
-    })
-  );
-  console.log("Swagger documentation available at /api-docs");
-}
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    explorer: true,
+    customCss: customSwaggerCSS,
+    customSiteTitle: "Currency Converter API Documentation",
+    swaggerOptions: {
+      docExpansion: "list",
+      filter: true,
+      displayRequestDuration: true,
+      tryItOutEnabled: true,
+    },
+  })
+);
+console.log("Swagger documentation available at /api-docs");
+
+// Routes
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Welcome to Currency Converter API!",
+    documentation: `${req.protocol}://${req.get("host")}/api-docs`,
+  });
+});
 
 // app.use(generalLimiter);
 app.use("/api", currencyRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
-
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Welcome to Currency Converter API!" });
-});
 
 const startServer = async () => {
   try {
@@ -71,7 +72,7 @@ const startServer = async () => {
       console.log(`                                                     
    Currency Converter Service                         
    Server: http://localhost:${config.port}                    
-   Documentation: http://localhost:${config.port}/api-docs   
+   Documentation: http://localhost:${config.port}/api-docs  
    Environment: ${config.nodeEnv}                   
 `);
     });
