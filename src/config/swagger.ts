@@ -23,7 +23,7 @@ const options: Options = {
         description: "Development server",
       },
       {
-        url: "https://api.currencyconverter.example.com",
+        url: "https://currency-converter-e4i2.onrender.com",
         description: "Production server",
       },
     ],
