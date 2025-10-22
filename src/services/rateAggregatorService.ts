@@ -131,6 +131,13 @@ export class RateAggregatorService {
       return null;
     }
 
+    await cacheService.setRate(
+      base,
+      target,
+      latestRate.rate,
+      `${latestRate.source} (stale)`
+    );
+
     return {
       baseCurrency: latestRate.baseCurrency,
       targetCurrency: latestRate.targetCurrency,
