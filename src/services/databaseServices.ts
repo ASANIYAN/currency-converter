@@ -17,7 +17,6 @@ export interface RateHistory {
 }
 
 export class DatabaseService {
-  // Save a new exchange rate to the database
   async saveRate(
     baseCurrency: string,
     targetCurrency: string,
@@ -50,7 +49,6 @@ export class DatabaseService {
     };
   }
 
-  // Get the most recent rate for a currency pair
   async getLatestRate(
     baseCurrency: string,
     targetCurrency: string
@@ -83,7 +81,6 @@ export class DatabaseService {
     };
   }
 
-  // Get rate history for the last 24 hours
   async getRateHistory(
     baseCurrency: string,
     targetCurrency: string,
@@ -113,7 +110,6 @@ export class DatabaseService {
     }));
   }
 
-  // Get all rates within a time range
   async getRatesByTimeRange(
     baseCurrency: string,
     targetCurrency: string,
@@ -145,7 +141,6 @@ export class DatabaseService {
     }));
   }
 
-  // Get count of stored rates for a currency pair
   async getRateCount(
     baseCurrency: string,
     targetCurrency: string
@@ -163,7 +158,6 @@ export class DatabaseService {
     return parseInt(result.rows[0].count, 10);
   }
 
-  // Delete old rates (cleanup operation)
   async deleteOldRates(daysToKeep: number = 30): Promise<number> {
     const text = `
       DELETE FROM exchange_rates
@@ -177,7 +171,6 @@ export class DatabaseService {
     return result.rowCount || 0;
   }
 
-  // Get all unique currency pairs in the database
   async getAllCurrencyPairs(): Promise<
     Array<{ base: string; target: string }>
   > {
@@ -196,5 +189,4 @@ export class DatabaseService {
   }
 }
 
-// Export singleton instance
 export const databaseService = new DatabaseService();

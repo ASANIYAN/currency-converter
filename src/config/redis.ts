@@ -18,17 +18,17 @@ export const connectRedis = async (): Promise<Redis> => {
     maxRetriesPerRequest: 3,
   });
 
-  redisClient.on("connect", () => {
-    // Redis connected successfully
-  });
+  // redisClient.on("connect", () => {
+  //   Redis connected successfully
+  // });
 
-  redisClient.on("error", (err) => {
-    // Redis connection error
-  });
+  // redisClient.on("error", (err) => {
+  //   Redis connection error
+  // });
 
-  redisClient.on("close", () => {
-    // Redis connection closed
-  });
+  // redisClient.on("close", () => {
+  //   Redis connection closed
+  // });
 
   return redisClient;
 };

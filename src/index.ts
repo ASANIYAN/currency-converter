@@ -13,13 +13,10 @@ import { securityHeaders } from "./middleware/securityHeader";
 
 const app: Express = express();
 
-// for rate limiting behind reverse proxies like nginx
 app.set("trust proxy", 1);
 
-// Security headers
 app.use(securityHeaders);
 
-// CORS
 if (config.nodeEnv === "development") {
   app.use(devCorsMiddleware);
   console.log("CORS: Allowing all origins (development mode)");
@@ -31,7 +28,6 @@ if (config.nodeEnv === "development") {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Setup Swagger documentation
 app.use(
   "/api-docs",
   swaggerUi.serve,
@@ -49,7 +45,6 @@ app.use(
 );
 console.log("Swagger documentation available at /api-docs");
 
-// Routes
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "Welcome to Currency Converter API!",
@@ -57,7 +52,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// app.use(generalLimiter);
 app.use("/api", currencyRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -16,12 +16,10 @@ export class CacheService {
     this.ttl = config.cache.ttlSeconds;
   }
 
-  // Generate cache key for currency pair
   private getCacheKey(base: string, target: string): string {
     return `rate:${base.toUpperCase()}:${target.toUpperCase()}`;
   }
 
-  // Stores rate in cache
   async setRate(
     baseCurrency: string,
     targetCurrency: string,
@@ -39,11 +37,9 @@ export class CacheService {
       timestamp: new Date().toISOString(),
     };
 
-    // Store as JSON string with TTL
     await redis.setex(key, this.ttl, JSON.stringify(data));
   }
 
-  // Retrieves rate from cache
   async getRate(
     baseCurrency: string,
     targetCurrency: string
@@ -60,7 +56,6 @@ export class CacheService {
     return JSON.parse(cached) as CachedRate;
   }
 
-  // Checks if a rate exists in cache
   async hasRate(
     baseCurrency: string,
     targetCurrency: string
@@ -72,7 +67,6 @@ export class CacheService {
     return exists === 1;
   }
 
-  // Gets remaining TTL for a cached rate
   async getTTL(baseCurrency: string, targetCurrency: string): Promise<number> {
     const redis = getRedisClient();
     const key = this.getCacheKey(baseCurrency, targetCurrency);
@@ -80,7 +74,6 @@ export class CacheService {
     return await redis.ttl(key);
   }
 
-  // Deletes a specific rate from cache
   async deleteRate(
     baseCurrency: string,
     targetCurrency: string
@@ -91,11 +84,9 @@ export class CacheService {
     await redis.del(key);
   }
 
-  // Clears all cached rates
   async clearAll(): Promise<void> {
     const redis = getRedisClient();
 
-    // Finds all keys matching the pattern
     const keys = await redis.keys("rate:*");
 
     if (keys.length > 0) {
@@ -104,5 +95,4 @@ export class CacheService {
   }
 }
 
-// Exports a singleton instance
 export const cacheService = new CacheService();

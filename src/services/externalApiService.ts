@@ -8,9 +8,8 @@ import {
 } from "../types/apiTypes";
 
 export class ExternalAPIService {
-  private readonly timeout = 5000; // 5 seconds timeout
+  private readonly timeout = 5000;
 
-  // Fetch from Fixer.io (Primary API)
   async fetchFromFixer(
     baseCurrency: string,
     targetCurrency: string
@@ -52,7 +51,6 @@ export class ExternalAPIService {
     }
   }
 
-  // Fetch from Frankfurter (Secondary API - No API key required)
   async fetchFromFrankfurter(
     baseCurrency: string,
     targetCurrency: string
@@ -74,7 +72,6 @@ export class ExternalAPIService {
         throw new Error(`Rate not found for ${targetCurrency}`);
       }
 
-      // Convert date string to ISO timestamp
       const timestamp = new Date(response.data.date).toISOString();
 
       return {
@@ -92,7 +89,6 @@ export class ExternalAPIService {
     }
   }
 
-  // Fetch from CurrencyAPI (Backup API)
   async fetchFromCurrencyAPI(
     baseCurrency: string,
     targetCurrency: string
@@ -129,19 +125,16 @@ export class ExternalAPIService {
     }
   }
 
-  // Fetch from multiple APIs with fallback strategy
   async fetchRateWithFallback(
     baseCurrency: string,
     targetCurrency: string
   ): Promise<ExternalAPIResponse> {
-    // Try primary API first
     const fixerResult = await this.fetchFromFixer(baseCurrency, targetCurrency);
 
     if (fixerResult.success) {
       return fixerResult;
     }
 
-    // Primary failed, try secondary
     const frankfurterResult = await this.fetchFromFrankfurter(
       baseCurrency,
       targetCurrency
@@ -151,7 +144,6 @@ export class ExternalAPIService {
       return frankfurterResult;
     }
 
-    // Secondary failed, try backup
     const currencyApiResult = await this.fetchFromCurrencyAPI(
       baseCurrency,
       targetCurrency
@@ -161,7 +153,6 @@ export class ExternalAPIService {
       return currencyApiResult;
     }
 
-    // All APIs failed
     return {
       success: false,
       rate: 0,
@@ -169,12 +160,10 @@ export class ExternalAPIService {
     };
   }
 
-  // Fetch from multiple APIs and average the results
   async fetchRateWithAggregation(
     baseCurrency: string,
     targetCurrency: string
   ): Promise<ExternalAPIResponse> {
-    // Fetch from all APIs in parallel
     const [fixerResult, openExchangeResult, currencyApiResult] =
       await Promise.allSettled([
         this.fetchFromFixer(baseCurrency, targetCurrency),
@@ -184,7 +173,6 @@ export class ExternalAPIService {
 
     const successfulResults: ExternalAPIResponse[] = [];
 
-    // Collect successful results
     if (fixerResult.status === "fulfilled" && fixerResult.value.success) {
       successfulResults.push(fixerResult.value);
     }
@@ -203,7 +191,6 @@ export class ExternalAPIService {
       successfulResults.push(currencyApiResult.value);
     }
 
-    // If no APIs succeeded, return failure
     if (successfulResults.length === 0) {
       return {
         success: false,
@@ -212,7 +199,6 @@ export class ExternalAPIService {
       };
     }
 
-    // Calculate average rate
     const averageRate =
       successfulResults.reduce((sum, result) => sum + result.rate, 0) /
       successfulResults.length;
@@ -227,30 +213,23 @@ export class ExternalAPIService {
     };
   }
 
-  // Helper to extract error messages
   private getErrorMessage(error: unknown): string {
-    // Check if it's an Axios error by examining its properties
     if (this.isAxiosError(error)) {
       if (error.response) {
-        // Server responded with error status
         return `HTTP ${error.response.status}: ${JSON.stringify(
           error.response.data
         )}`;
       } else if (error.request) {
-        // Request made but no response (timeout, network error)
         return "No response received (timeout or network error)";
       } else {
-        // Error setting up request
         return error.message || "Axios request setup error";
       }
     }
 
-    // Check if it's a regular Error object
     if (error && typeof error === "object" && "message" in error) {
       return (error as Error).message;
     }
 
-    // Handle string errors
     if (typeof error === "string") {
       return error;
     }
@@ -258,7 +237,6 @@ export class ExternalAPIService {
     return "Unknown error occurred";
   }
 
-  // Custom Axios error type guard
   private isAxiosError(error: any): error is any {
     return (
       error &&
@@ -270,5 +248,4 @@ export class ExternalAPIService {
   }
 }
 
-// Export singleton instance
 export const externalAPIService = new ExternalAPIService();

@@ -14,26 +14,17 @@ export const connectDatabase = async (): Promise<Pool> => {
     database: config.postgres.database,
     user: config.postgres.user,
     password: config.postgres.password,
-    max: 20, // Maximum number of clients in the pool
-    idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-    connectionTimeoutMillis: 2000, // Return error after 2 seconds if can't connect
-    ssl: {
-      rejectUnauthorized: false, // Required for Neon
-    },
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
   });
 
-  pool.on("connect", () => {
-    // PostgreSQL client connected
-  });
+  pool.on("connect", () => {});
 
-  pool.on("error", (err) => {
-    // PostgreSQL pool error
-  });
+  pool.on("error", (err) => {});
 
-  // Test the connection
   try {
     const client = await pool.connect();
-    // PostgreSQL connected successfully
     client.release();
   } catch (error) {
     throw error;
@@ -58,7 +49,6 @@ export const disconnectDatabase = async (): Promise<void> => {
   }
 };
 
-// Helper function for executing queries
 export const query = async (
   text: string,
   params?: any[]

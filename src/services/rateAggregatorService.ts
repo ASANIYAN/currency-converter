@@ -15,7 +15,6 @@ export interface ConversionResult {
 }
 
 export class RateAggregatorService {
-  // Main method: Get exchange rate with fallback chain
   async getExchangeRate(
     baseCurrency: string,
     targetCurrency: string
@@ -23,29 +22,24 @@ export class RateAggregatorService {
     const base = baseCurrency.toUpperCase();
     const target = targetCurrency.toUpperCase();
 
-    // Step 1: Check cache first
     const cachedRate = await this.checkCache(base, target);
     if (cachedRate) {
       return cachedRate;
     }
 
-    // Step 2: Cache miss - fetch from external APIs
     const apiRate = await this.fetchFromAPIs(base, target);
     if (apiRate) {
       return apiRate;
     }
 
-    // Step 3: All APIs failed - try database as last resort
     const dbRate = await this.fetchFromDatabase(base, target);
     if (dbRate) {
       return dbRate;
     }
 
-    // Step 4: Everything failed
     throw new Error(`Unable to fetch exchange rate for ${base} → ${target}`);
   }
 
-  // Convert an amount using the exchange rate
   async convertCurrency(
     baseCurrency: string,
     targetCurrency: string,
@@ -58,11 +52,10 @@ export class RateAggregatorService {
     return {
       ...rateResult,
       amount,
-      convertedAmount: Math.round(convertedAmount * 100) / 100, // Round to 2 decimal places
+      convertedAmount: Math.round(convertedAmount * 100) / 100,
     };
   }
 
-  // Step 1: Check cache
   private async checkCache(
     base: string,
     target: string
@@ -85,7 +78,6 @@ export class RateAggregatorService {
     };
   }
 
-  // Step 2: Fetch from external APIs
   private async fetchFromAPIs(
     base: string,
     target: string
@@ -99,10 +91,8 @@ export class RateAggregatorService {
       return null;
     }
 
-    // Store in cache for future requests
     await cacheService.setRate(base, target, apiResult.rate, apiResult.source);
 
-    // Store in database for historical record
     await databaseService.saveRate(
       base,
       target,
@@ -120,7 +110,6 @@ export class RateAggregatorService {
     };
   }
 
-  // Step 3: Fetch from database (fallback)
   private async fetchFromDatabase(
     base: string,
     target: string
@@ -148,7 +137,6 @@ export class RateAggregatorService {
     };
   }
 
-  // Get rate history for a currency pair
   async getRateHistory(
     baseCurrency: string,
     targetCurrency: string,
@@ -172,7 +160,6 @@ export class RateAggregatorService {
     };
   }
 
-  // Helper: Calculate how old the data is
   private getDataAge(createdAt: Date): string {
     const now = new Date();
     const ageMs = now.getTime() - createdAt.getTime();
@@ -189,7 +176,6 @@ export class RateAggregatorService {
     }
   }
 
-  // Clear cache for a specific currency pair
   async clearCache(
     baseCurrency: string,
     targetCurrency: string
@@ -200,11 +186,9 @@ export class RateAggregatorService {
     );
   }
 
-  // Clear all cached rates
   async clearAllCache(): Promise<void> {
     await cacheService.clearAll();
   }
 }
 
-// Export singleton instance
 export const rateAggregatorService = new RateAggregatorService();

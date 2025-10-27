@@ -5,7 +5,6 @@ export interface AppError extends Error {
   isOperational?: boolean;
 }
 
-// Global error handler
 export const errorHandler = (
   err: AppError,
   req: Request,
@@ -23,7 +22,6 @@ export const errorHandler = (
   });
 };
 
-// 404 handler
 export const notFoundHandler = (req: Request, res: Response) => {
   res.status(404).json({
     error: "Route not found",
@@ -33,7 +31,6 @@ export const notFoundHandler = (req: Request, res: Response) => {
   });
 };
 
-// Async handler wrapper
 export const asyncHandler = (
   fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
 ) => {

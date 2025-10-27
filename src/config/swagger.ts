@@ -177,10 +177,8 @@ const options: Options = {
   apis: [path.join(process.cwd(), "src/routes/*.ts")],
 };
 
-// Generate Swagger specification
 export const specs = swaggerJSDoc(options);
 
-// CSS used to style the Swagger UI to resemble the reference image
 export const customSwaggerCSS = `
   /* Topbar styling - reduce spacing and make logo/text white */
   .swagger-ui .topbar { background: #0f1724; padding: 6px 12px; }
@@ -207,7 +205,6 @@ export const customSwaggerCSS = `
   .swagger-ui .authorize-wrapper { margin-top: -10px; }
 `;
 
-// Legacy helper - still available if callers want to mount via function
 export const setupSwagger = (app: Express): void => {
   app.use(
     "/api-docs",
@@ -222,7 +219,6 @@ export const setupSwagger = (app: Express): void => {
         displayRequestDuration: true,
         tryItOutEnabled: true,
         persistAuthorization: true,
-        // Ensure the correct server is selected by default
         servers: servers,
       },
     })

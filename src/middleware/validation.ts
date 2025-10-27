@@ -9,7 +9,6 @@ declare global {
   }
 }
 
-// Schema for currency conversion request
 export const convertSchema = Joi.object({
   from: Joi.string()
     .length(3)
@@ -39,7 +38,6 @@ export const convertSchema = Joi.object({
   }),
 });
 
-// Schema for getting exchange rate
 export const rateSchema = Joi.object({
   from: Joi.string()
     .length(3)
@@ -63,7 +61,6 @@ export const rateSchema = Joi.object({
     }),
 });
 
-// Schema for rate history request
 export const historySchema = Joi.object({
   from: Joi.string()
     .length(3)
@@ -99,13 +96,11 @@ export const historySchema = Joi.object({
     }),
 });
 
-// Validation middleware factory
 export const validate = (schema: Joi.ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    // Validate query parameters
     const { error, value } = schema.validate(req.query, {
-      abortEarly: false, // Return all errors, not just the first one
-      stripUnknown: true, // Remove unknown fields
+      abortEarly: false,
+      stripUnknown: true,
     });
 
     if (error) {
@@ -120,7 +115,6 @@ export const validate = (schema: Joi.ObjectSchema) => {
       });
     }
 
-    // Add req.validatedQuery with validated and sanitized values
     req.validatedQuery = value;
     next();
   };
